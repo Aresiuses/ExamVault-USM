@@ -391,98 +391,36 @@ function App() {
     };
 
     const handleUploadSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setUploadError(null);
-
-        if (!paperFile) {
-            setUploadError("Please select a paper PDF to upload.");
-            return;
-        }
-        if (!selectedCourseId || !selectedYearId) {
-            setUploadError("Please select a course and academic year.");
-            return;
-        }
-
-        try {
-            setIsUploading(true);
-
-            const targetCourse = availableCourses.find((c) => c.id === selectedCourseId);
-            const targetYear = availableYears.find((y) => y.id === selectedYearId);
-            const courseCode = targetCourse?.code || "COURSE";
-            const yearStr = targetYear?.year_label.replace("/", "-") || "YEAR";
-            const timestamp = Date.now();
-
-            // 1. Upload Main Paper PDF to Storage
-            const cleanExamType = selectedExamType.replace(/\s+/g, "");
-            const paperFilePath = `papers/${courseCode}_${yearStr}_${cleanExamType}_${timestamp}.pdf`;
-
-            const { error: paperUploadErr } = await supabase.storage
-                .from("exam-papers")
-                .upload(paperFilePath, paperFile, {
-                    contentType: "application/pdf",
-                    upsert: true,
-                });
-
-            if (paperUploadErr) throw new Error(`Paper upload failed: ${paperUploadErr.message}`);
-
-            const { data: paperUrlData } = supabase.storage
-                .from("exam-papers")
-                .getPublicUrl(paperFilePath);
-
-            // 2. Upload Solution PDF (if selected)
-            let solutionUrl: string | null = null;
-            if (hasSolutionFile && solutionFile) {
-                const solutionFilePath = `solutions/${courseCode}_${yearStr}_${cleanExamType}_scheme_${timestamp}.pdf`;
-                const { error: solutionUploadErr } = await supabase.storage
-                    .from("exam-papers")
-                    .upload(solutionFilePath, solutionFile, {
-                        contentType: "application/pdf",
-                        upsert: true,
-                    });
-
-                if (solutionUploadErr) throw new Error(`Solution upload failed: ${solutionUploadErr.message}`);
-
-                const { data: solUrlData } = supabase.storage
-                    .from("exam-papers")
-                    .getPublicUrl(solutionFilePath);
-                solutionUrl = solUrlData.publicUrl;
-            }
-
-            // 3. Insert record into database
-            const formattedSize = formatFileSize(paperFile.size);
-
-            const { error: insertErr } = await supabase.from("papers").insert([
-                {
-                    course_id: selectedCourseId,
-                    academic_year_id: selectedYearId,
-                    exam_type: selectedExamType,
-                    semester: selectedSemester,
-                    file_url: paperUrlData.publicUrl,
-                    file_size: formattedSize,
-                    has_solution: Boolean(solutionUrl),
-                    solution_url: solutionUrl,
-                },
-            ]);
-
-            if (insertErr) {
-                if (insertErr.code === "23505") {
-                    throw new Error("This paper already exists for this course, year, semester, and exam type.");
-                }
-                throw new Error(insertErr.message);
-            }
-
-            // 4. Refresh view & reset form
-            await fetchAllData();
-            setPaperFile(null);
-            setSolutionFile(null);
-            setHasSolutionFile(false);
-            setUploadOpen(false);
-        } catch (err: any) {
-            console.error(err);
-            setUploadError(err.message || "Failed to upload paper. Please try again.");
-        } finally {
-            setIsUploading(false);
-        }
+      e.preventDefault();
+      setUploadError(null);
+    
+      if (!paperFile) {
+        setUploadError("Please select a paper PDF to upload.");
+        return;
+      }
+    
+      try {
+        setIsUploading(true);
+    
+       
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+    
+        
+        alert(
+          "Demo Mode: To comply with university intellectual property policies, public paper uploads are currently disabled. No file was saved."
+        );
+    
+       
+        setPaperFile(null);
+        setSolutionFile(null);
+        setHasSolutionFile(false);
+        setUploadOpen(false);
+      } catch (err: any) {
+        console.error(err);
+        setUploadError("Simulated upload failed.");
+      } finally {
+        setIsUploading(false);
+      }
     };
 
     return (
@@ -508,7 +446,7 @@ function App() {
                             >
                                 <Icon name="search" className="size-4" />
                                 <span>Quick search</span>
-                                <kbd>⌘ K</kbd>
+                                <kbd>Ctrl+K</kbd>
                             </button>
                             <button
                                 type="button"
@@ -582,7 +520,7 @@ function App() {
                                         </button>
                                     ) : (
                                         <kbd className="mr-4 hidden rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-[11px] text-[var(--muted)] sm:block">
-                                            ⌘ K
+                                            Ctrl+K
                                         </kbd>
                                     )}
                                 </label>
@@ -760,7 +698,9 @@ function App() {
                                     {uploadError}
                                 </div>
                             )}
-
+                            <div className="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-300">
+                              <strong className="font-semibold text-amber-200">Portfolio Demo Notice:</strong> Public uploads are restricted pending university administrative and copyright clearance. Submitted files will not be permanently stored.
+                            </div>
                             <form onSubmit={handleUploadSubmit} className="mt-5 space-y-4">
                                 {/* Course Selection */}
                                 <div>
