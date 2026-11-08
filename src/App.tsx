@@ -720,7 +720,7 @@ function App() {
                 <footer className="border-t border-[var(--border)]">
                     <div className="mx-auto flex max-w-[1360px] flex-col gap-3 px-5 py-6 text-xs text-[var(--faint)] sm:flex-row sm:items-center sm:justify-between sm:px-8">
                         <p>Built by students, for students.</p>
-                        <p>{papers.length} papers indexed · Updated weekly</p>
+                        <p>{papers.length} papers indexed · Updated often</p>
                     </div>
                 </footer>
 
