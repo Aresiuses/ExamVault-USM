@@ -84,7 +84,6 @@ export type Paper = {
     solution: boolean;
     file_url: string;
     solution_url: string | null;
-    downloads: number;
 };
 
 type CourseOption = {
@@ -462,7 +461,6 @@ function App() {
                     file_size: formattedSize,
                     has_solution: Boolean(solutionUrl),
                     solution_url: solutionUrl,
-                    downloads: 0,
                 },
             ]);
 
