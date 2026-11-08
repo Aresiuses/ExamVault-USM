@@ -521,7 +521,7 @@ function App() {
                                 <Icon name={theme === "dark" ? "sun" : "moon"} className="size-[17px]" />
                             </button>
                             <a
-                                href="https://github.com"
+                                href="https://github.com/Aresiuses/ExamVault-USM"
                                 target="_blank"
                                 rel="noreferrer"
                                 className="icon-button"
